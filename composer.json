@@ -1,0 +1,16 @@
+{
+    "name": "jtotty/csv-sorter",
+    "description": "Sort and format the data from uploaded csv's for updating database data.",
+    "type": "utility",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "James Totty",
+            "email": "jt.totty1991@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.2"
+    }
+}
