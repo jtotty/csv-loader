@@ -1,8 +1,8 @@
 <?php
 
-namespace Test;
+namespace Jtotty\Hello;
 
-class Test
+class HelloTest
 {
     public static function world()
     {
