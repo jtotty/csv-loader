@@ -1,2 +1,3 @@
-# csv-sorter
-Ever had csv's uploaded by the user which have the column names in the wrong order or certain data in the wrong format? Fear no more!
+# csv-loader
+
+Gathers data from csv file by column headings. Checks for missing data and formats dates. Allows data to be inserted into mysql database.
