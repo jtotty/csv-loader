@@ -78,7 +78,10 @@ class CsvLoader
             array_push($this->contents, $row);
         }
 
-        // // Initialise Workflow
+        // Make sure every pupil has a forename and surname
+        $this->contents = $this->checkPupilNames($this->contents);
+
+        // Initialise Workflow
         $this->workflow = new Workflow($this->reader);
     }
 
@@ -115,11 +118,41 @@ class CsvLoader
             return $input['Gender'] !== 'M';
         });
 
-        $this->workflow->addWriter(new ArrayWriter($this->contents));
-        $this->workflow->addStep($step);
-        $this->workflow->process();
+        $this->workflow
+            ->addWriter(new ArrayWriter($this->contents))
+            ->addStep($step)
+            ->process();
 
         return $this->contents;
+    }
+
+    /**
+     *
+     */
+    public function checkPupilNames($contents)
+    {
+        foreach ($contents as $index => $row) {
+            // Forename empty && Surname contains two words
+            if ($row['Forename'] === '') {
+                if (str_word_count($row['Surname']) > 1) {
+                    $name = preg_split('/\s+/', $row['Surname']);
+                    $contents[$index]['Forename'] = $name[0];
+                    $contents[$index]['Surname']  = $name[1];
+                }
+            }
+
+            // Surname empty && forename contains two words
+            if ($row['Surname'] === '') {
+                if (str_word_count($row['Forename']) > 1) {
+                    $name = preg_split('/\s+/', $row['Forename']);
+                    $contents[$index]['Forename'] = $name[0];
+                    $contents[$index]['Surname']  = $name[1];
+                }
+            }
+        }
+
+        var_export($contents);
+        return $contents;
     }
 
     /**
