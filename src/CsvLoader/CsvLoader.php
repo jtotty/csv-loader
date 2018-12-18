@@ -4,6 +4,7 @@ namespace Jtotty\CsvLoader;
 
 use \SplFileObject;
 use Port\Csv\CsvReader;
+use Port\Writer\ArrayWriter;
 use Port\Steps\StepAggregator as Workflow;
 use Port\Steps\Step\FilterStep;
 
@@ -77,7 +78,7 @@ class CsvLoader
             array_push($this->contents, $row);
         }
 
-        // Initialise Workflow
+        // // Initialise Workflow
         $this->workflow = new Workflow($this->reader);
     }
 
@@ -88,7 +89,7 @@ class CsvLoader
      */
     public function getContents()
     {
-        return $this->workflow;
+        return $this->contents;
     }
 
     /**
@@ -102,14 +103,23 @@ class CsvLoader
     }
 
     /**
+     * TESTING tktktk
+     * Filters the contents array based on specified logic
      *
+     * @return Array
      */
-    public function testDob()
+    public function filterStepTest()
     {
         $step = new FilterStep();
         $step->add(function($input) {
             return $input['Gender'] !== 'M';
         });
+
+        $this->workflow->addWriter(new ArrayWriter($this->contents));
+        $this->workflow->addStep($step);
+        $this->workflow->process();
+
+        return $this->contents;
     }
 
     /**
