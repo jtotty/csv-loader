@@ -6,3 +6,4 @@ use Jtotty\CsvLoader\CsvLoader;
 
 $csvLoader = new CsvLoader();
 $csvLoader->setFile('files/csv_file.csv');
+var_export($csvLoader->getContents());

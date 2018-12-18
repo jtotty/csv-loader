@@ -13,7 +13,8 @@
     "require": {
         "php": ">=7.2",
         "portphp/steps": "^2.0@dev",
-        "portphp/csv": "^2.0@dev"
+        "portphp/csv": "^2.0@dev",
+        "portphp/doctrine": "^2.0@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^7"

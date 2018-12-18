@@ -3,10 +3,18 @@
 namespace Jtotty\CsvLoader;
 
 use \SplFileObject;
+
 use Port\Csv\CsvReader;
+
 use Port\Writer\ArrayWriter;
+
 use Port\Steps\StepAggregator as Workflow;
 use Port\Steps\Step\FilterStep;
+use Port\Steps\Step\ConverterStep;
+
+use Port\ValueConverter\DateTimeValueConverter;
+use Port\Steps\Step\ValueConverterStep;
+
 
 class CsvLoader
 {
@@ -83,6 +91,7 @@ class CsvLoader
 
         // Initialise Workflow
         $this->workflow = new Workflow($this->reader);
+        $this->convertDob();
     }
 
     /**
@@ -129,40 +138,39 @@ class CsvLoader
     /**
      *
      */
+    public function convertDob()
+    {
+        $dateTimeConverter = new DateTimeValueConverter('Ymd');
+        $converterStep = new ValueConverterStep();
+        $converterStep->add('dob', $dateTimeConverter);
+        $this->workflow->addStep($converterStep);
+    }
+
+    /**
+     * Very specific method to check if a user has entered
+     * the entire pupil's name into one column (Either forename or surname).
+     *
+     * @param  Array $contents
+     * @return Array $contents
+     */
     public function checkPupilNames($contents)
     {
         foreach ($contents as $index => $row) {
             // Forename empty && Surname contains two words
-            if ($row['Forename'] === '') {
-                if (str_word_count($row['Surname']) > 1) {
-                    $name = preg_split('/\s+/', $row['Surname']);
-                    $contents[$index]['Forename'] = $name[0];
-                    $contents[$index]['Surname']  = $name[1];
-                }
+            if ($row['Forename'] === '' && str_word_count($row['Surname']) > 1) {
+                $name = preg_split('/\s+/', $row['Surname']);
+                $contents[$index]['Forename'] = $name[0];
+                $contents[$index]['Surname']  = end($name); // In-case of middle names
             }
 
             // Surname empty && forename contains two words
-            if ($row['Surname'] === '') {
-                if (str_word_count($row['Forename']) > 1) {
-                    $name = preg_split('/\s+/', $row['Forename']);
-                    $contents[$index]['Forename'] = $name[0];
-                    $contents[$index]['Surname']  = $name[1];
-                }
+            if ($row['Surname'] === '' && str_word_count($row['Forename']) > 1) {
+                $name = preg_split('/\s+/', $row['Forename']);
+                $contents[$index]['Forename'] = $name[0];
+                $contents[$index]['Surname']  = end($name); // In-case of middle names
             }
         }
 
-        var_export($contents);
         return $contents;
-    }
-
-    /**
-     * Maps the data from the source to the correct target columns
-     *
-     * @param Array $source_data
-     * @param Array $target_data
-     */
-    public function mapColumnData(Array $source_data, Array $target_data)
-    {
-
     }
 }
