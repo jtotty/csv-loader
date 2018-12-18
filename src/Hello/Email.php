@@ -4,7 +4,6 @@ namespace Jtotty\Hello;
 
 use SebastianBergmann\ObjectReflector\InvalidArgumentException;
 
-
 class Email
 {
     private $email;
