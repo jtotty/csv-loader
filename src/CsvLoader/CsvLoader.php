@@ -4,6 +4,8 @@ namespace Jtotty\CsvLoader;
 
 use \SplFileObject;
 use Port\Csv\CsvReader;
+use Port\Steps\StepAggregator as Workflow;
+use Port\Steps\Step\FilterStep;
 
 class CsvLoader
 {
@@ -29,11 +31,23 @@ class CsvLoader
     private $reader;
 
     /**
+     * Holds an instanec of the \Port\Steps\StepAggregator
+     *
+     * @var \Port\Steps\StepAggregator $workflow
+     */
+    private $workflow;
+
+    /**
      * Database columns
      *
      * @var Array $columns
      */
     private $columns = ['forename', 'surname', 'gender', 'dob', 'year', 'reg', 'eal', 'premium', 'meals', 'care'];
+
+    /*
+        sll_pupils:         'pupil_id', 'forename', 'surname', 'gender', 'dob'
+        sll_pupils_import:             'forename', 'surname', 'gender', 'dob'
+    */
 
     /**
      * Constructor method
@@ -62,16 +76,40 @@ class CsvLoader
         foreach ($this->reader as $row) {
             array_push($this->contents, $row);
         }
+
+        // Initialise Workflow
+        $this->workflow = new Workflow($this->reader);
     }
 
     /**
-     * Retrieves the column headings from the uploaded csv
+     * Returns the content of the csv file as array
+     *
+     * @return Array
+     */
+    public function getContents()
+    {
+        return $this->workflow;
+    }
+
+    /**
+     * Returns the column headings from the uploaded csv
      *
      * @return Array
      */
     public function getColumnHeadings()
     {
-        var_export($this->reader->getColumnHeaders());
+        return $this->reader->getColumnHeaders();
+    }
+
+    /**
+     *
+     */
+    public function testDob()
+    {
+        $step = new FilterStep();
+        $step->add(function($input) {
+            return $input['Gender'] !== 'M';
+        });
     }
 
     /**
