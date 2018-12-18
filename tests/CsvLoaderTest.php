@@ -6,4 +6,4 @@ use Jtotty\CsvLoader\CsvLoader;
 
 $csvLoader = new CsvLoader();
 $csvLoader->setFile('files/csv_file.csv');
-$csvLoader->iterateCsv();
+$csvLoader->getColumnHeadings();

@@ -9,65 +9,79 @@ class CsvLoader
 {
     /**
      * Holds an instance of SplFileObject
-     * @var SplFileObject
+     *
+     * @var SplFileObject $file
      */
-    protected $file;
+    private $file;
 
     /**
      * Holds an isntance of file contents as an associative array
-     * @var Array
+     *
+     * @var Array $contents
      */
-    protected $contents;
+    private $contents = [];
+
+    /**
+     * Holds an instance of the \Port\Csv\CsvReader
+     *
+     * @var \Port\Csv\CsvReader $reader
+     */
+    private $reader;
 
     /**
      * Database columns
+     *
+     * @var Array $columns
      */
-    protected $forename;
-    protected $surname;
-    protected $gender;
-    protected $dob;
-    protected $year;
-    protected $reg;
-    protected $eal;
-    protected $premium;
-    protected $meals;
-    protected $care;
+    private $columns = ['forename', 'surname', 'gender', 'dob', 'year', 'reg', 'eal', 'premium', 'meals', 'care'];
 
     /**
      * Constructor method
      */
-    public function __constructor($file = null, $contents = [])
+    public function __constructor()
     {
-        $this->file     = $file;
-        $this->contents = $contents;
+        // Code...
     }
 
     /**
      * Set the file to the SplFileObject
+     *
      * @param  String $file_path
      * @return void
      */
     public function setFile(String $file_path)
     {
+        // Set the file
         $this->file = new SplFileObject($file_path);
+
+        // Add file to reader
+        $this->reader = new CsvReader($this->file);
+        $this->reader->setHeaderRowNumber(0, CsvReader::DUPLICATE_HEADERS_INCREMENT);
+
+        // Iterate through contents - add to collection
+        foreach ($this->reader as $row) {
+            array_push($this->contents, $row);
+        }
     }
 
     /**
-     * Iterate over a csv file and output contents as associative array
+     * Retrieves the column headings from the uploaded csv
+     *
+     * @return Array
      */
-    public function iterateCsv()
+    public function getColumnHeadings()
     {
-        // Make the rows associative arrays
-        // $file   = new SplFileObject('files/csv_file.csv');
-        $reader = new CsvReader($this->file);
-        $reader->setHeaderRowNumber(0, CsvReader::DUPLICATE_HEADERS_INCREMENT);
+        var_export($this->reader->getColumnHeaders());
+    }
 
-        // Iterate over the CSV file
-        $collection = [];
-        foreach ($reader as $row) {
-            array_push($collection, $row);
-        }
+    /**
+     * Maps the data from the source to the correct target columns
+     *
+     * @param Array $source_data
+     * @param Array $target_data
+     */
+    public function mapColumnData(Array $source_data, Array $target_data)
+    {
 
-        var_export($collection);
     }
 }
