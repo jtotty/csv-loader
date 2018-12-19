@@ -5,5 +5,5 @@ require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files
 use Jtotty\CsvLoader\CsvLoader;
 
 $csvLoader = new CsvLoader();
-$csvLoader->setFile('files/csv_file.csv');
+$csvLoader->loadFile('files/csv_file.csv');
 var_export($csvLoader->getContents());

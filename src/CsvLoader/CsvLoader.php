@@ -67,12 +67,12 @@ class CsvLoader
     }
 
     /**
-     * Set the file to the SplFileObject
+     * Load the file to the SplFileObject
      *
      * @param  String $file_path
      * @return void
      */
-    public function setFile(String $file_path)
+    public function loadFile(String $file_path)
     {
         // Set the file
         $this->file = new SplFileObject($file_path);
@@ -81,17 +81,16 @@ class CsvLoader
         $this->reader = new CsvReader($this->file);
         $this->reader->setHeaderRowNumber(0, CsvReader::DUPLICATE_HEADERS_INCREMENT);
 
-        // Iterate through contents - add to collection
-        foreach ($this->reader as $row) {
-            array_push($this->contents, $row);
-        }
-
-        // Make sure every pupil has a forename and surname
-        $this->contents = $this->checkPupilNames($this->contents);
-
         // Initialise Workflow
         $this->workflow = new Workflow($this->reader);
+
+        // Various steps
+        // $this->checkPupilNames();
         $this->convertDob();
+
+        $writer = new ArrayWriter($this->contents);
+        $this->workflow->addWriter($writer);
+        $this->workflow->process();
     }
 
     /**
@@ -127,22 +126,30 @@ class CsvLoader
             return $input['Gender'] !== 'M';
         });
 
+        // Add to the workflow
         $this->workflow
             ->addWriter(new ArrayWriter($this->contents))
-            ->addStep($step)
-            ->process();
+            ->addStep($step);
 
         return $this->contents;
     }
 
     /**
+     * Converts date of birth to correct format
      *
+     * @return void
      */
     public function convertDob()
     {
-        $dateTimeConverter = new DateTimeValueConverter('Ymd');
-        $converterStep = new ValueConverterStep();
-        $converterStep->add('dob', $dateTimeConverter);
+        // We need to make sure the input format is correct
+        // Code ...
+
+        // Convert from input format to output
+        $dateTimeConverter = new DateTimeValueConverter('j-M-y', 'Y-m-d');
+        $converterStep     = new ValueConverterStep();
+        $converterStep->add('[DOB]', $dateTimeConverter);
+
+        // Add to the workflow
         $this->workflow->addStep($converterStep);
     }
 
