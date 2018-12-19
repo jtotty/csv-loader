@@ -145,7 +145,7 @@ class CsvLoader
      *
      * @return void
      */
-    public function mapColumnNames()
+    public function mapColumnNamesStep()
     {
         // Create a mapping step
         $mappingStep = new MappingStep();
@@ -164,7 +164,7 @@ class CsvLoader
      *
      * @return void
      */
-    public function convertDob()
+    public function convertDobStep()
     {
         // Convert from input format to output
         $dateTimeConverter = new DateTimeValueConverter(null, 'Y-m-d');
@@ -182,7 +182,7 @@ class CsvLoader
      * @param  Array $contents
      * @return Array $contents
      */
-    public function checkPupilNames()
+    public function checkPupilNamesStep()
     {
         $checkNamesStep = new CheckPupilNames();
         $this->workflow->addStep($checkNamesStep);

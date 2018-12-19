@@ -8,7 +8,7 @@ use Jtotty\CsvLoader\CsvLoader;
 $csvLoader = new CsvLoader();
 $csvLoader->loadFile('files/csv_file.csv');
 
-// Testing tktktk
+// Array Map
 $mapping = [
     'English as additional language' => 'eal',
     'Pupil Premium Indicator' => 'premium',
@@ -20,9 +20,9 @@ $mapping = [
 $csvLoader->setColumnMap($mapping);
 
 // Steps
-$csvLoader->mapColumnNames();
-$csvLoader->checkPupilNames();
-$csvLoader->convertDob();
+$csvLoader->mapColumnNamesStep();
+$csvLoader->checkPupilNamesStep();
+$csvLoader->convertDobStep();
 
 // Process
 $csvLoader->processData();
