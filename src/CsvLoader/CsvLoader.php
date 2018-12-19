@@ -38,6 +38,13 @@ class CsvLoader
     private $contents = [];
 
     /**
+     * Holds an instance of the column name mappings
+     *
+     * @var Array $columnMap
+     */
+    private $columnMap;
+
+    /**
      * Holds an instance of the \Port\Csv\CsvReader
      *
      * @var \Port\Csv\CsvReader $reader
@@ -124,25 +131,27 @@ class CsvLoader
     }
 
     /**
+     * Sets the data column mapping array
+     *
+     * @return void
+     */
+    public function setColumnMap(Array $columnMap)
+    {
+        $this->columnMap = $columnMap;
+    }
+
+    /**
      * Renames the column names according to the map
      *
      * @return void
      */
     public function mapColumnNames()
     {
-        // Testing tktktk
-        $mapping = [
-            'English as additional language' => 'eal',
-            'Pupil Premium Indicator' => 'premium',
-            'Eligible for free meals' => 'meals',
-            'Ever in care' => 'care'
-        ];
-
         // Create a mapping step
         $mappingStep = new MappingStep();
 
         // Iterate through the column names that need changing
-        foreach ($mapping as $key => $value) {
+        foreach ($this->columnMap as $key => $value) {
             $mappingStep->map('[' . $key . ']', '[' . $value . ']');
         }
 

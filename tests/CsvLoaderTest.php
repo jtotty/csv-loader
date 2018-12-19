@@ -8,10 +8,21 @@ use Jtotty\CsvLoader\CsvLoader;
 $csvLoader = new CsvLoader();
 $csvLoader->loadFile('files/csv_file.csv');
 
+// Testing tktktk
+$mapping = [
+    'English as additional language' => 'eal',
+    'Pupil Premium Indicator' => 'premium',
+    'Eligible for free meals' => 'meals',
+    'Ever in care' => 'care'
+];
+
+// Set the names of the columns we want to change
+$csvLoader->setColumnMap($mapping);
+
 // Steps
+$csvLoader->mapColumnNames();
 $csvLoader->checkPupilNames();
 $csvLoader->convertDob();
-$csvLoader->mapColumnNames();
 
 // Process
 $csvLoader->processData();
