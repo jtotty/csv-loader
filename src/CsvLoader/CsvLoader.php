@@ -9,13 +9,14 @@ use Port\Csv\CsvReader;
 use Port\Writer\ArrayWriter;
 
 use Port\Steps\Step\FilterStep;
+use Port\Steps\Step\MappingStep;
 use Port\Steps\Step\ConverterStep;
+use Port\Steps\Step\ValueConverterStep;
 use Port\Steps\StepAggregator as Workflow;
 
 use Jtotty\Steps\CheckPupilNames;
 
 use Port\ValueConverter\DateTimeValueConverter;
-use Port\Steps\Step\ValueConverterStep;
 
 /**
  * @author James Totty <jtotty1991@gmail.com>
@@ -51,18 +52,6 @@ class CsvLoader
     private $workflow;
 
     /**
-     * Database columns
-     *
-     * @var Array $columns
-     */
-    private $columns = ['forename', 'surname', 'gender', 'dob', 'year', 'reg', 'eal', 'premium', 'meals', 'care'];
-
-    /*
-        sll_pupils:         'pupil_id', 'forename', 'surname', 'gender', 'dob'
-        sll_pupils_import:             'forename', 'surname', 'gender', 'dob'
-    */
-
-    /**
      * Constructor method
      */
     public function __constructor()
@@ -85,8 +74,8 @@ class CsvLoader
         $this->reader = new CsvReader($this->file);
         $this->reader->setHeaderRowNumber(0, CsvReader::DUPLICATE_HEADERS_INCREMENT);
 
-        // Beging the workflow!!
-        $this->parseData();
+        // Initialise the workflow!!
+        $this->createWorkFlow();
     }
 
     /**
@@ -94,21 +83,14 @@ class CsvLoader
      *
      * @return void
      */
-    public function parseData()
+    public function createWorkFlow()
     {
         // Initialise Workflow
         $this->workflow = new Workflow($this->reader);
 
-        // Various steps
-        $this->checkPupilNames();
-        $this->convertDob();
-
         // The modified array data will be saved to `$this->contents`
         $writer = new ArrayWriter($this->contents);
         $this->workflow->addWriter($writer);
-
-        // Process the workflow
-        $this->workflow->process();
     }
 
     /**
@@ -129,6 +111,43 @@ class CsvLoader
     public function getColumnHeadings()
     {
         return $this->reader->getColumnHeaders();
+    }
+
+    /**
+     * Run the workflow
+     *
+     * @return void
+     */
+    public function processData()
+    {
+        $this->workflow->process();
+    }
+
+    /**
+     * Renames the column names according to the map
+     *
+     * @return void
+     */
+    public function mapColumnNames()
+    {
+        // Testing tktktk
+        $mapping = [
+            'English as additional language' => 'eal',
+            'Pupil Premium Indicator' => 'premium',
+            'Eligible for free meals' => 'meals',
+            'Ever in care' => 'care'
+        ];
+
+        // Create a mapping step
+        $mappingStep = new MappingStep();
+
+        // Iterate through the column names that need changing
+        foreach ($mapping as $key => $value) {
+            $mappingStep->map('[' . $key . ']', '[' . $value . ']');
+        }
+
+        // Add to the workflow
+        $this->workflow->addStep($mappingStep);
     }
 
     /**
