@@ -8,14 +8,18 @@ use Port\Csv\CsvReader;
 
 use Port\Writer\ArrayWriter;
 
-use Port\Steps\StepAggregator as Workflow;
 use Port\Steps\Step\FilterStep;
 use Port\Steps\Step\ConverterStep;
+use Port\Steps\StepAggregator as Workflow;
+
+use Jtotty\Steps\CheckPupilNames;
 
 use Port\ValueConverter\DateTimeValueConverter;
 use Port\Steps\Step\ValueConverterStep;
 
-
+/**
+ * @author James Totty <jtotty1991@gmail.com>
+ */
 class CsvLoader
 {
     /**
@@ -81,15 +85,29 @@ class CsvLoader
         $this->reader = new CsvReader($this->file);
         $this->reader->setHeaderRowNumber(0, CsvReader::DUPLICATE_HEADERS_INCREMENT);
 
+        // Beging the workflow!!
+        $this->parseData();
+    }
+
+    /**
+     * Starts the workflow to process the array data
+     *
+     * @return void
+     */
+    public function parseData()
+    {
         // Initialise Workflow
         $this->workflow = new Workflow($this->reader);
 
         // Various steps
-        // $this->checkPupilNames();
+        $this->checkPupilNames();
         $this->convertDob();
 
+        // The modified array data will be saved to `$this->contents`
         $writer = new ArrayWriter($this->contents);
         $this->workflow->addWriter($writer);
+
+        // Process the workflow
         $this->workflow->process();
     }
 
@@ -114,38 +132,14 @@ class CsvLoader
     }
 
     /**
-     * TESTING tktktk
-     * Filters the contents array based on specified logic
-     *
-     * @return Array
-     */
-    public function filterStepTest()
-    {
-        $step = new FilterStep();
-        $step->add(function($input) {
-            return $input['Gender'] !== 'M';
-        });
-
-        // Add to the workflow
-        $this->workflow
-            ->addWriter(new ArrayWriter($this->contents))
-            ->addStep($step);
-
-        return $this->contents;
-    }
-
-    /**
      * Converts date of birth to correct format
      *
      * @return void
      */
     public function convertDob()
     {
-        // We need to make sure the input format is correct
-        // Code ...
-
         // Convert from input format to output
-        $dateTimeConverter = new DateTimeValueConverter('j-M-y', 'Y-m-d');
+        $dateTimeConverter = new DateTimeValueConverter(null, 'Y-m-d');
         $converterStep     = new ValueConverterStep();
         $converterStep->add('[DOB]', $dateTimeConverter);
 
@@ -160,24 +154,9 @@ class CsvLoader
      * @param  Array $contents
      * @return Array $contents
      */
-    public function checkPupilNames($contents)
+    public function checkPupilNames()
     {
-        foreach ($contents as $index => $row) {
-            // Forename empty && Surname contains two words
-            if ($row['Forename'] === '' && str_word_count($row['Surname']) > 1) {
-                $name = preg_split('/\s+/', $row['Surname']);
-                $contents[$index]['Forename'] = $name[0];
-                $contents[$index]['Surname']  = end($name); // In-case of middle names
-            }
-
-            // Surname empty && forename contains two words
-            if ($row['Surname'] === '' && str_word_count($row['Forename']) > 1) {
-                $name = preg_split('/\s+/', $row['Forename']);
-                $contents[$index]['Forename'] = $name[0];
-                $contents[$index]['Surname']  = end($name); // In-case of middle names
-            }
-        }
-
-        return $contents;
+        $checkNamesStep = new CheckPupilNames();
+        $this->workflow->addStep($checkNamesStep);
     }
 }
