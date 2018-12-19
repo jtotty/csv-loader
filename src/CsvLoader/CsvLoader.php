@@ -3,10 +3,23 @@
 namespace Jtotty\CsvLoader;
 
 use \SplFileObject;
-use Port\Csv\CsvReader;
-use Port\Steps\StepAggregator as Workflow;
-use Port\Steps\Step\FilterStep;
 
+use Port\Csv\CsvReader;
+
+use Port\Writer\ArrayWriter;
+
+use Port\Steps\Step\FilterStep;
+use Port\Steps\Step\ConverterStep;
+use Port\Steps\StepAggregator as Workflow;
+
+use Jtotty\Steps\CheckPupilNames;
+
+use Port\ValueConverter\DateTimeValueConverter;
+use Port\Steps\Step\ValueConverterStep;
+
+/**
+ * @author James Totty <jtotty1991@gmail.com>
+ */
 class CsvLoader
 {
     /**
@@ -58,12 +71,12 @@ class CsvLoader
     }
 
     /**
-     * Set the file to the SplFileObject
+     * Load the file to the SplFileObject
      *
      * @param  String $file_path
      * @return void
      */
-    public function setFile(String $file_path)
+    public function loadFile(String $file_path)
     {
         // Set the file
         $this->file = new SplFileObject($file_path);
@@ -72,13 +85,30 @@ class CsvLoader
         $this->reader = new CsvReader($this->file);
         $this->reader->setHeaderRowNumber(0, CsvReader::DUPLICATE_HEADERS_INCREMENT);
 
-        // Iterate through contents - add to collection
-        foreach ($this->reader as $row) {
-            array_push($this->contents, $row);
-        }
+        // Beging the workflow!!
+        $this->parseData();
+    }
 
+    /**
+     * Starts the workflow to process the array data
+     *
+     * @return void
+     */
+    public function parseData()
+    {
         // Initialise Workflow
         $this->workflow = new Workflow($this->reader);
+
+        // Various steps
+        $this->checkPupilNames();
+        $this->convertDob();
+
+        // The modified array data will be saved to `$this->contents`
+        $writer = new ArrayWriter($this->contents);
+        $this->workflow->addWriter($writer);
+
+        // Process the workflow
+        $this->workflow->process();
     }
 
     /**
@@ -88,7 +118,7 @@ class CsvLoader
      */
     public function getContents()
     {
-        return $this->workflow;
+        return $this->contents;
     }
 
     /**
@@ -102,24 +132,31 @@ class CsvLoader
     }
 
     /**
+     * Converts date of birth to correct format
      *
+     * @return void
      */
-    public function testDob()
+    public function convertDob()
     {
-        $step = new FilterStep();
-        $step->add(function($input) {
-            return $input['Gender'] !== 'M';
-        });
+        // Convert from input format to output
+        $dateTimeConverter = new DateTimeValueConverter(null, 'Y-m-d');
+        $converterStep     = new ValueConverterStep();
+        $converterStep->add('[DOB]', $dateTimeConverter);
+
+        // Add to the workflow
+        $this->workflow->addStep($converterStep);
     }
 
     /**
-     * Maps the data from the source to the correct target columns
+     * Very specific method to check if a user has entered
+     * the entire pupil's name into one column (Either forename or surname).
      *
-     * @param Array $source_data
-     * @param Array $target_data
+     * @param  Array $contents
+     * @return Array $contents
      */
-    public function mapColumnData(Array $source_data, Array $target_data)
+    public function checkPupilNames()
     {
-
+        $checkNamesStep = new CheckPupilNames();
+        $this->workflow->addStep($checkNamesStep);
     }
 }
