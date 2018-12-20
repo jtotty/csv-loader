@@ -2,8 +2,6 @@
 
 namespace Jtotty\CsvLoader;
 
-use \SplFileObject;
-
 use Port\Csv\CsvReader;
 
 use Port\Writer\ArrayWriter;
@@ -75,7 +73,7 @@ class CsvLoader
     public function loadFile(String $file_path)
     {
         // Set the file
-        $this->file = new SplFileObject($file_path);
+        $this->file = new \SplFileObject($file_path);
 
         // Add file to reader
         $this->reader = new CsvReader($this->file);
