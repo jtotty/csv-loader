@@ -25,6 +25,8 @@ class UnitTest extends TestCase
 
         // Set the names of the columns we want to change
         $this->csvLoader->setColumnMap($mapping);
+
+        // Add the optional steps
         $this->csvLoader->mapColumnNamesStep();
         $this->csvLoader->checkPupilNamesStep();
         $this->csvLoader->convertDobStep();
