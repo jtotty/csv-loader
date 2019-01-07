@@ -45,4 +45,19 @@ class UnitTest extends TestCase
             $this->assertEquals($pupil_attributes['DOB'], $d->format('Y-m-d'));
         }
     }
+
+    /** @test */
+    public function pupil_has_valid_forename_and_surname()
+    {
+        $contents = $this->csvLoader->getContents();
+
+        foreach ($contents as $pupil_attributes) {
+            $forename = $pupil_attributes['Forename'];
+            $surname  = $pupil_attributes['Surname'];
+
+            // RegExp: No whitespace, only characters 'a-z', 'A-Z', and '-'
+            $this->assertRegExp('/^[\S][a-zA-Z\-]+$/', $forename);
+            $this->assertRegExp('/^[\S][a-zA-Z-]+$/', $surname);
+        }
+    }
 }
