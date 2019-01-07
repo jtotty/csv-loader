@@ -55,7 +55,6 @@ class CsvLoader
      */
     public function __constructor()
     {
-        // Code...
     }
 
     /**
