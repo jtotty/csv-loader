@@ -1,5 +1,5 @@
 {
-    "name": "jtotty/csv-sorter",
+    "name": "jtotty/csv-loader",
     "description": "Sort and format the data from uploaded csv's for updating database data.",
     "type": "utility",
     "license": "MIT",
