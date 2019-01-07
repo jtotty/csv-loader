@@ -1,6 +1,10 @@
 # csv-loader
 
-Gathers data from csv file by column headings. Checks for missing data and formats dates. Allows data to be inserted into mysql database.
+Loads data from a CSV file by column headings. Specific utility tool for SpeechLink Multimedia Ltd.
 
-## External Libraries
+- Mapping column names.
+- Checks validity of names.
+- Check validity of dates.
+
+## External Libraries Used
 PortPHP - https://portphp.readthedocs.io/en/latest/
