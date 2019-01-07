@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files
 
@@ -6,14 +8,14 @@ use Jtotty\CsvLoader\CsvLoader;
 
 // Load CSV File
 $csvLoader = new CsvLoader();
-$csvLoader->loadFile('files/csv_file.csv');
+$csvLoader->loadFile('files/csv_file_2.csv');
 
 // Array Map
 $mapping = [
     'English as additional language' => 'eal',
-    'Pupil Premium Indicator' => 'premium',
-    'Eligible for free meals' => 'meals',
-    'Ever in care' => 'care'
+    'Pupil Premium Indicator'        => 'premium',
+    'Eligible for free meals'        => 'meals',
+    'Ever in care'                   => 'care',
 ];
 
 // Set the names of the columns we want to change

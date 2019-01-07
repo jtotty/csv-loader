@@ -1,63 +1,57 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Jtotty\CsvLoader;
 
+use Jtotty\Steps\CheckPupilDob;
+use Jtotty\Steps\CheckPupilNames;
 use Port\Csv\CsvReader;
-
-use Port\Writer\ArrayWriter;
-
-use Port\Steps\Step\FilterStep;
 use Port\Steps\Step\MappingStep;
-use Port\Steps\Step\ConverterStep;
 use Port\Steps\Step\ValueConverterStep;
 use Port\Steps\StepAggregator as Workflow;
-
-use Jtotty\Steps\CheckPupilNames;
-
 use Port\ValueConverter\DateTimeValueConverter;
+use Port\Writer\ArrayWriter;
 
-/**
- * @author James Totty <jtotty1991@gmail.com>
- */
 class CsvLoader
 {
     /**
-     * Holds an instance of SplFileObject
+     * Holds an instance of SplFileObject.
      *
-     * @var SplFileObject $file
+     * @var SplFileObject
      */
     private $file;
 
     /**
-     * Holds an isntance of file contents as an associative array
+     * Holds an isntance of file contents as an associative array.
      *
-     * @var Array $contents
+     * @var array
      */
     private $contents = [];
 
     /**
-     * Holds an instance of the column name mappings
+     * Holds an instance of the column name mappings.
      *
-     * @var Array $columnMap
+     * @var array
      */
     private $columnMap;
 
     /**
-     * Holds an instance of the \Port\Csv\CsvReader
+     * Holds an instance of the \Port\Csv\CsvReader.
      *
-     * @var \Port\Csv\CsvReader $reader
+     * @var \Port\Csv\CsvReader
      */
     private $reader;
 
     /**
-     * Holds an instanec of the \Port\Steps\StepAggregator
+     * Holds an instanec of the \Port\Steps\StepAggregator.
      *
-     * @var \Port\Steps\StepAggregator $workflow
+     * @var \Port\Steps\StepAggregator
      */
     private $workflow;
 
     /**
-     * Constructor method
+     * Constructor method.
      */
     public function __constructor()
     {
@@ -65,9 +59,8 @@ class CsvLoader
     }
 
     /**
-     * Load the file to the SplFileObject
+     * Load the file to the SplFileObject.
      *
-     * @param  String $file_path
      * @return void
      */
     public function loadFile(String $file_path)
@@ -84,7 +77,7 @@ class CsvLoader
     }
 
     /**
-     * Starts the workflow to process the array data
+     * Starts the workflow to process the array data.
      *
      * @return void
      */
@@ -99,7 +92,7 @@ class CsvLoader
     }
 
     /**
-     * Returns the content of the csv file as array
+     * Returns the content of the csv file as array.
      *
      * @return Array
      */
@@ -109,7 +102,7 @@ class CsvLoader
     }
 
     /**
-     * Returns the column headings from the uploaded csv
+     * Returns the column headings from the uploaded csv.
      *
      * @return Array
      */
@@ -119,7 +112,7 @@ class CsvLoader
     }
 
     /**
-     * Run the workflow
+     * Run the workflow.
      *
      * @return void
      */
@@ -129,17 +122,17 @@ class CsvLoader
     }
 
     /**
-     * Sets the data column mapping array
+     * Sets the data column mapping array.
      *
      * @return void
      */
-    public function setColumnMap(Array $columnMap)
+    public function setColumnMap(array $columnMap)
     {
         $this->columnMap = $columnMap;
     }
 
     /**
-     * Renames the column names according to the map
+     * Renames the column names according to the map.
      *
      * @return void
      */
@@ -158,18 +151,21 @@ class CsvLoader
     }
 
     /**
-     * Converts date of birth to correct format
+     * Converts date of birth to correct format.
      *
      * @return void
      */
     public function convertDobStep()
     {
+        // Format the dob string so we can convert it correctly
+        $checkDobStep = new CheckPupilDob();
+        $this->workflow->addStep($checkDobStep);
+
         // Convert from input format to output
         $dateTimeConverter = new DateTimeValueConverter(null, 'Y-m-d');
         $converterStep     = new ValueConverterStep();
         $converterStep->add('[DOB]', $dateTimeConverter);
 
-        // Add to the workflow
         $this->workflow->addStep($converterStep);
     }
 
@@ -177,8 +173,7 @@ class CsvLoader
      * Very specific method to check if a user has entered
      * the entire pupil's name into one column (Either forename or surname).
      *
-     * @param  Array $contents
-     * @return Array $contents
+     * @return array $contents
      */
     public function checkPupilNamesStep()
     {

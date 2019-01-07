@@ -13,7 +13,7 @@ class UnitTest extends TestCase
     public function setUp()
     {
         $this->csvLoader = new CsvLoader();
-        $this->csvLoader->loadFile('files/csv_file.csv');
+        $this->csvLoader->loadFile('files/csv_file_2.csv');
 
         // Array Map
         $mapping = [
@@ -36,17 +36,6 @@ class UnitTest extends TestCase
     }
 
     /** @test */
-    public function dob_has_been_converted()
-    {
-        $contents = $this->csvLoader->getContents();
-
-        foreach ($contents as $pupil_attributes) {
-            $d = DateTime::createFromFormat('Y-m-d', $pupil_attributes['DOB']);
-            $this->assertEquals($pupil_attributes['DOB'], $d->format('Y-m-d'));
-        }
-    }
-
-    /** @test */
     public function pupil_has_valid_forename_and_surname()
     {
         $contents = $this->csvLoader->getContents();
@@ -55,9 +44,20 @@ class UnitTest extends TestCase
             $forename = $pupil_attributes['Forename'];
             $surname  = $pupil_attributes['Surname'];
 
-            // RegExp: No whitespace, only characters 'a-z', 'A-Z', and '-'
-            $this->assertRegExp('/^[\S][a-zA-Z\-]+$/', $forename);
-            $this->assertRegExp('/^[\S][a-zA-Z-]+$/', $surname);
+            // RegExp: No whitespace at beginning or end, only characters "a-z", "A-Z", "-", and "'"
+            $this->assertRegExp('/^[\S][a-zA-Z0-9\s-\']+[\S]$/', $forename);
+            $this->assertRegExp('/^[\S][a-zA-Z0-9\s-\']+[\S]$/', $surname);
+        }
+    }
+
+    /** @test */
+    public function dob_has_been_converted()
+    {
+        $contents = $this->csvLoader->getContents();
+
+        foreach ($contents as $pupil_attributes) {
+            $d = DateTime::createFromFormat('Y-m-d', $pupil_attributes['DOB']);
+            $this->assertEquals($pupil_attributes['DOB'], $d->format('Y-m-d'));
         }
     }
 }
