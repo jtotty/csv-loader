@@ -8,7 +8,7 @@ use Jtotty\CsvLoader\CsvLoader;
 
 // Load CSV File
 $csvLoader = new CsvLoader();
-$csvLoader->loadFile('files/csv_file_2.csv');
+$csvLoader->loadFile('files/csv_file.csv');
 
 // Array Map
 $mapping = [
@@ -30,4 +30,5 @@ $csvLoader->convertDobStep();
 $csvLoader->processData();
 
 // Debugging
-var_export($csvLoader->getContents());
+var_export($csvLoader->getProcessedContents());
+var_export($csvLoader->getDataCount());

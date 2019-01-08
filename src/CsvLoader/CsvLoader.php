@@ -91,13 +91,13 @@ class CsvLoader
     }
 
     /**
-     * Returns the content of the csv file as array.
+     * Returns the number of data rows.
      *
-     * @return Array
+     * @return Integer
      */
-    public function getContents()
+    public function getDataCount()
     {
-        return $this->contents;
+        return $this->reader->count();
     }
 
     /**
@@ -178,5 +178,15 @@ class CsvLoader
     {
         $checkNamesStep = new CheckPupilNames();
         $this->workflow->addStep($checkNamesStep);
+    }
+
+    /**
+     * Returns the content of the csv file as array.
+     *
+     * @return Array
+     */
+    public function getProcessedContents()
+    {
+        return $this->contents;
     }
 }
