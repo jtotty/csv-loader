@@ -63,10 +63,14 @@ class UnitTest extends TestCase
     }
 
     /** @test */
-    public function group_value_true_or_false()
+    public function group_value_is_bool()
     {
         foreach ($this->contents as $pupil_attributes) {
-            $this->assertIsBool($pupil_attributes['EAL']);
+            $attributes_to_test = array_splice($pupil_attributes, 6);
+
+            foreach ($attributes_to_test as $attribute) {
+                $this->assertIsBool($attribute);
+            }
         }
     }
 }
