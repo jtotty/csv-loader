@@ -31,8 +31,9 @@ class UnitTest extends TestCase
         // Add the optional steps
         $this->csvLoader->mapColumnNamesStep();
         $this->csvLoader->checkPupilNamesStep();
+        $this->csvLoader->checkPupilGenderStep();
         $this->csvLoader->convertDobStep();
-        $this->csvLoader->convertGroupTypesToBoolean();
+        $this->csvLoader->convertGroupTypesToBooleanStep();
 
         // Process
         $this->csvLoader->processData();
@@ -50,6 +51,17 @@ class UnitTest extends TestCase
             // RegExp: No whitespace at beginning or end, only characters "a-z", "A-Z", "-", and "'"
             $this->assertRegExp('/^[\S][a-zA-Z0-9\s-\']+[\S]$/', $forename);
             $this->assertRegExp('/^[\S][a-zA-Z0-9\s-\']+[\S]$/', $surname);
+        }
+    }
+
+    /** @test */
+    public function pupil_gender_is_valid()
+    {
+        foreach ($this->contents as $pupil_attributes) {
+            $gender = $pupil_attributes['Gender'];
+
+            $this->assertIsString($gender);
+            $this->assertTrue($gender === 'F' || $gender === 'M');
         }
     }
 

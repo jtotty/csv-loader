@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Jtotty\CsvLoader;
 
 use Jtotty\Steps\CheckPupilDob;
+use Jtotty\Steps\CheckPupilGender;
 use Jtotty\Steps\CheckPupilNames;
 use Jtotty\Steps\ConvertToBoolean;
 use Port\Csv\CsvReader;
@@ -158,13 +159,11 @@ class CsvLoader
     public function convertDobStep()
     {
         // Format the dob string so we can convert it correctly
-        $checkDobStep = new CheckPupilDob();
-        $this->workflow->addStep($checkDobStep);
+        $this->workflow->addStep(new CheckPupilDob());
 
         // Convert from input format to output
-        $dateTimeConverter = new DateTimeValueConverter(null, 'Y-m-d');
-        $converterStep     = new ValueConverterStep();
-        $converterStep->add('[DOB]', $dateTimeConverter);
+        $converterStep = new ValueConverterStep();
+        $converterStep->add('[DOB]', new DateTimeValueConverter(null, 'Y-m-d'));
 
         $this->workflow->addStep($converterStep);
     }
@@ -172,29 +171,32 @@ class CsvLoader
     /**
      * Very specific method to check if a user has entered
      * the entire pupil's name into one column (Either forename or surname).
-     *
-     * @return array $contents
      */
     public function checkPupilNamesStep()
     {
-        $checkNamesStep = new CheckPupilNames();
-        $this->workflow->addStep($checkNamesStep);
+        $this->workflow->addStep(new CheckPupilNames());
+    }
+
+    /**
+     * Step to check for validity of pupil gender and convert to
+     * appropriate 'male' or 'female' string value.
+     */
+    public function checkPupilGenderStep()
+    {
+        $this->workflow->addStep(new CheckPupilGender());
     }
 
     /**
      * Very specific method to convert the additional attributes
      * to.
      */
-    public function convertGroupTypesToBoolean()
+    public function convertGroupTypesToBooleanStep()
     {
-        $convertToBoolean = new ConvertToBoolean();
-        $this->workflow->addStep($convertToBoolean);
+        $this->workflow->addStep(new ConvertToBoolean());
     }
 
     /**
      * Returns the content of the csv file as array.
-     *
-     * @return Array
      */
     public function getProcessedContents()
     {
