@@ -15,9 +15,7 @@ class UnitTest extends TestCase
     public function setUp()
     {
         $this->csvLoader = new CsvLoader();
-        $this->csvLoader->loadFile('files/csv_file.csv');
-
-        // Forename,Surname,Gender,DOB,Year,Reg,English as additional language,Pupil Premium Indicator,Eligible for free meals
+        $this->csvLoader->loadFile('files/csv_file_2.csv');
 
         // Array Map
         $mapping = [
@@ -34,6 +32,7 @@ class UnitTest extends TestCase
         $this->csvLoader->mapColumnNamesStep();
         $this->csvLoader->checkPupilNamesStep();
         $this->csvLoader->convertDobStep();
+        $this->csvLoader->convertGroupTypesToBoolean();
 
         // Process
         $this->csvLoader->processData();

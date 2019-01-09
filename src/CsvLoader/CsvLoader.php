@@ -6,6 +6,7 @@ namespace Jtotty\CsvLoader;
 
 use Jtotty\Steps\CheckPupilDob;
 use Jtotty\Steps\CheckPupilNames;
+use Jtotty\Steps\ConvertToBoolean;
 use Port\Csv\CsvReader;
 use Port\Steps\Step\MappingStep;
 use Port\Steps\Step\ValueConverterStep;
@@ -186,6 +187,8 @@ class CsvLoader
      */
     public function convertGroupTypesToBoolean()
     {
+        $convertToBoolean = new ConvertToBoolean();
+        $this->workflow->addStep($convertToBoolean);
     }
 
     /**

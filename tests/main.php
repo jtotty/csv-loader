@@ -25,6 +25,7 @@ $csvLoader->setColumnMap($mapping);
 $csvLoader->mapColumnNamesStep();
 $csvLoader->checkPupilNamesStep();
 $csvLoader->convertDobStep();
+$csvLoader->convertGroupTypesToBoolean();
 
 // Process
 $csvLoader->processData();
