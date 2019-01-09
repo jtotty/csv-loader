@@ -10,17 +10,21 @@ class UnitTest extends TestCase
      */
     protected $csvLoader;
 
+    protected $contents;
+
     public function setUp()
     {
         $this->csvLoader = new CsvLoader();
-        $this->csvLoader->loadFile('files/csv_file_2.csv');
+        $this->csvLoader->loadFile('files/csv_file.csv');
+
+        // Forename,Surname,Gender,DOB,Year,Reg,English as additional language,Pupil Premium Indicator,Eligible for free meals
 
         // Array Map
         $mapping = [
-            'English as additional language' => 'eal',
-            'Pupil Premium Indicator'        => 'premium',
-            'Eligible for free meals'        => 'meals',
-            'Ever in care'                   => 'care',
+            'English as additional language' => 'EAL',
+            'Pupil Premium Indicator'        => 'Pupil Premium',
+            'Eligible for free meals'        => 'Free Meals',
+            'Ever in care'                   => 'Care',
         ];
 
         // Set the names of the columns we want to change
@@ -33,14 +37,14 @@ class UnitTest extends TestCase
 
         // Process
         $this->csvLoader->processData();
+
+        $this->contents = $this->csvLoader->getProcessedContents();
     }
 
     /** @test */
     public function pupil_has_valid_forename_and_surname()
     {
-        $contents = $this->csvLoader->getContents();
-
-        foreach ($contents as $pupil_attributes) {
+        foreach ($this->contents as $pupil_attributes) {
             $forename = $pupil_attributes['Forename'];
             $surname  = $pupil_attributes['Surname'];
 
@@ -53,11 +57,17 @@ class UnitTest extends TestCase
     /** @test */
     public function dob_has_been_converted()
     {
-        $contents = $this->csvLoader->getContents();
-
-        foreach ($contents as $pupil_attributes) {
+        foreach ($this->contents as $pupil_attributes) {
             $d = DateTime::createFromFormat('Y-m-d', $pupil_attributes['DOB']);
             $this->assertEquals($pupil_attributes['DOB'], $d->format('Y-m-d'));
+        }
+    }
+
+    /** @test */
+    public function group_value_true_or_false()
+    {
+        foreach ($this->contents as $pupil_attributes) {
+            $this->assertIsBool($pupil_attributes['EAL']);
         }
     }
 }

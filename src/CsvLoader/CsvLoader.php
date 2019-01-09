@@ -181,6 +181,14 @@ class CsvLoader
     }
 
     /**
+     * Very specific method to convert the additional attributes
+     * to.
+     */
+    public function convertGroupTypesToBoolean()
+    {
+    }
+
+    /**
      * Returns the content of the csv file as array.
      *
      * @return Array

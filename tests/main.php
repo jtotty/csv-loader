@@ -12,10 +12,10 @@ $csvLoader->loadFile('files/csv_file.csv');
 
 // Array Map
 $mapping = [
-    'English as additional language' => 'eal',
-    'Pupil Premium Indicator'        => 'premium',
-    'Eligible for free meals'        => 'meals',
-    'Ever in care'                   => 'care',
+    'English as additional language' => 'EAL',
+    'Pupil Premium Indicator'        => 'Pupil Premium',
+    'Eligible for free meals'        => 'Free Meals',
+    'Ever in care'                   => 'Care',
 ];
 
 // Set the names of the columns we want to change
@@ -31,4 +31,3 @@ $csvLoader->processData();
 
 // Debugging
 var_export($csvLoader->getProcessedContents());
-var_export($csvLoader->getDataCount());
