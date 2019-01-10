@@ -5,17 +5,13 @@ use PHPUnit\Framework\TestCase;
 
 class UnitTest extends TestCase
 {
-    /**
-     * Holds an instance of the Jtotty\CsvLoader\CsvLoader.
-     */
     protected $csvLoader;
-
     protected $contents;
 
     public function setUp()
     {
         $this->csvLoader = new CsvLoader();
-        $this->csvLoader->loadFile('files/csv_file_2.csv');
+        $this->csvLoader->loadFile('files/five_pupils_test.csv');
 
         // Array Map
         $mapping = [
@@ -25,6 +21,8 @@ class UnitTest extends TestCase
             'Ever in care'                   => 'Care',
         ];
 
+        $optionalColumns = ['EAL', 'Pupil Premium', 'Free Meals', 'Care'];
+
         // Set the names of the columns we want to change
         $this->csvLoader->setColumnMap($mapping);
 
@@ -33,7 +31,7 @@ class UnitTest extends TestCase
         $this->csvLoader->checkPupilNamesStep();
         $this->csvLoader->checkPupilGenderStep();
         $this->csvLoader->convertDobStep();
-        $this->csvLoader->convertGroupTypesToBooleanStep();
+        $this->csvLoader->checkGroupOptionValuesStep($optionalColumns);
 
         // Process
         $this->csvLoader->processData();
@@ -75,14 +73,23 @@ class UnitTest extends TestCase
     }
 
     /** @test */
-    public function group_value_is_bool()
+    public function optional_group_value_is_t_or_f()
     {
         foreach ($this->contents as $pupil_attributes) {
             $attributes_to_test = array_splice($pupil_attributes, 6);
 
             foreach ($attributes_to_test as $attribute) {
-                $this->assertIsBool($attribute);
+                $this->assertTrue($attribute === 'T' || $attribute === 'F' || $attribute === 'invalid');
             }
         }
+    }
+
+    /** @test */
+    public function able_to_write_data_to_csv_file()
+    {
+        $filePath = './files/invalid_pupils.csv';
+        $this->csvLoader->writeToCsv($this->contents, $filePath);
+        $this->assertFileExists($filePath);
+        $this->assertIsReadable($filePath);
     }
 }

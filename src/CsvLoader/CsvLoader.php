@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Jtotty\CsvLoader;
 
-use Jtotty\Steps\CheckPupilDob;
-use Jtotty\Steps\CheckPupilGender;
-use Jtotty\Steps\CheckPupilNames;
-use Jtotty\Steps\ConvertToBoolean;
+use Jtotty\Steps\CheckGroupOptionsStep;
+use Jtotty\Steps\CheckPupilDobStep;
+use Jtotty\Steps\CheckPupilGenderStep;
+use Jtotty\Steps\CheckPupilNamesStep;
 use Port\Csv\CsvReader;
+use Port\Csv\CsvWriter;
 use Port\Steps\Step\MappingStep;
 use Port\Steps\Step\ValueConverterStep;
 use Port\Steps\StepAggregator as Workflow;
@@ -159,7 +160,7 @@ class CsvLoader
     public function convertDobStep()
     {
         // Format the dob string so we can convert it correctly
-        $this->workflow->addStep(new CheckPupilDob());
+        $this->workflow->addStep(new CheckPupilDobStep());
 
         // Convert from input format to output
         $converterStep = new ValueConverterStep();
@@ -174,7 +175,7 @@ class CsvLoader
      */
     public function checkPupilNamesStep()
     {
-        $this->workflow->addStep(new CheckPupilNames());
+        $this->workflow->addStep(new CheckPupilNamesStep());
     }
 
     /**
@@ -183,16 +184,16 @@ class CsvLoader
      */
     public function checkPupilGenderStep()
     {
-        $this->workflow->addStep(new CheckPupilGender());
+        $this->workflow->addStep(new CheckPupilGenderStep());
     }
 
     /**
      * Very specific method to convert the additional attributes
      * to.
      */
-    public function convertGroupTypesToBooleanStep()
+    public function checkGroupOptionValuesStep(Array $options)
     {
-        $this->workflow->addStep(new ConvertToBoolean());
+        $this->workflow->addStep(new CheckGroupOptionsStep($options));
     }
 
     /**
@@ -201,5 +202,25 @@ class CsvLoader
     public function getProcessedContents()
     {
         return $this->contents;
+    }
+
+    /**
+     * Writes contents of an array to a csv file.
+     */
+    public function writeToCsv(array $data, String $filePath)
+    {
+        $writer = new CsvWriter(','); // Set delimiter to comma (default = semicolon)
+        $writer->setStream(fopen($filePath, 'w'));
+
+        // Write column headers
+        $columnHeaders = array_keys($data[0]);
+        $writer->writeItem($columnHeaders);
+
+        // Get row data and write
+        foreach ($data as $pupil) {
+            $writer->writeItem(array_values($pupil)); // Reset associative keys to indexes
+        }
+
+        $writer->finish();
     }
 }

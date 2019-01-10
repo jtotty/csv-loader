@@ -6,7 +6,7 @@ namespace Jtotty\Steps;
 
 use Port\Steps\Step;
 
-class CheckPupilGender implements Step
+class CheckPupilGenderStep implements Step
 {
     public function process($item, callable $next)
     {
@@ -17,6 +17,10 @@ class CheckPupilGender implements Step
 
             case 'M':
                 $item['Gender'] = 'M';
+                break;
+
+            default:
+                $item['Gender'] = 'invalid';
                 break;
         }
 

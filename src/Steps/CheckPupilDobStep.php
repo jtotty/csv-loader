@@ -6,7 +6,7 @@ namespace Jtotty\Steps;
 
 use Port\Steps\Step;
 
-class CheckPupilDob implements Step
+class CheckPupilDobStep implements Step
 {
     public function process($item, callable $next)
     {

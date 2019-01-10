@@ -26,7 +26,7 @@ $csvLoader->mapColumnNamesStep();
 $csvLoader->checkPupilNamesStep();
 $csvLoader->checkPupilGenderStep();
 $csvLoader->convertDobStep();
-$csvLoader->convertGroupTypesToBooleanStep();
+$csvLoader->checkGroupOptionValuesStep();
 
 // Process
 $csvLoader->processData();
