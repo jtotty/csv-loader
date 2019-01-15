@@ -47,8 +47,8 @@ class UnitTest extends TestCase
             $surname  = $pupil_attributes['Surname'];
 
             // RegExp: No whitespace at beginning or end, only characters "a-z", "A-Z", "-", and "'"
-            $this->assertRegExp('/^[\S][a-zA-Z0-9\s-\']+[\S]$/', $forename);
-            $this->assertRegExp('/^[\S][a-zA-Z0-9\s-\']+[\S]$/', $surname);
+            $this->assertRegExp('/^[\SA-Z][a-zA-Z0-9\s-\']+[\S]$/', $forename);
+            $this->assertRegExp('/^[\SA-Z][a-zA-Z0-9\s-\']+[\S]$/', $surname);
         }
     }
 

@@ -8,7 +8,7 @@ use Jtotty\CsvLoader\CsvLoader;
 
 // Load CSV File
 $csvLoader = new CsvLoader();
-$csvLoader->loadFile('files/csv_file.csv');
+$csvLoader->loadFile('files/five_pupils_test.csv');
 
 // Array Map
 $mapping = [
@@ -18,6 +18,8 @@ $mapping = [
     'Ever in care'                   => 'Care',
 ];
 
+$optionalColumns = ['EAL', 'Pupil Premium', 'Free Meals', 'Care'];
+
 // Set the names of the columns we want to change
 $csvLoader->setColumnMap($mapping);
 
@@ -26,7 +28,7 @@ $csvLoader->mapColumnNamesStep();
 $csvLoader->checkPupilNamesStep();
 $csvLoader->checkPupilGenderStep();
 $csvLoader->convertDobStep();
-$csvLoader->checkGroupOptionValuesStep();
+$csvLoader->checkGroupOptionValuesStep($optionalColumns);
 
 // Process
 $csvLoader->processData();

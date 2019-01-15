@@ -8,6 +8,9 @@ use Port\Steps\Step;
 
 class CheckPupilNamesStep implements Step
 {
+    /**
+     * {@inheritdoc}
+     */
     public function process($item, callable $next)
     {
         // Forename empty && Surname contains two words
@@ -25,9 +28,33 @@ class CheckPupilNamesStep implements Step
         }
 
         // Remove any whitespace from names
-        $item['Forename'] = trim($item['Forename']);
-        $item['Surname']  = trim($item['Surname']);
+        // Only first letter of name uppercase (inc. double barrelled names)
+        $item['Forename'] = $this->formatName($item['Forename']);
+        $item['Surname']  = $this->formatName($item['Surname']);
 
         return $next($item);
+    }
+
+    /**
+     * @param string $name
+     */
+    public function formatName($name)
+    {
+        // Remove any whitespace from beginning and end.
+        $name = trim($name);
+
+        // Format double barrelled names.
+        if (strpos($name, '-') !== false) {
+            $words = explode('-', $name);
+
+            foreach ($words as $index => $word) {
+                $words[$index] = ucfirst(strtolower($word));
+            }
+
+            return implode('-', $words);
+        }
+
+        // Standard first letter uppercase for each word
+        return ucwords(strtolower($name));
     }
 }
