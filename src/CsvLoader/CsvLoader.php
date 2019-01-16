@@ -125,6 +125,16 @@ class CsvLoader
     }
 
     /**
+     * Stop the workflow so we can unlink the file.
+     *
+     * @return void
+     */
+    public function stoprWorkflow()
+    {
+        $this->workflow = null;
+    }
+
+    /**
      * Sets the data column mapping array.
      *
      * @return void

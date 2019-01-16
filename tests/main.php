@@ -8,7 +8,8 @@ use Jtotty\CsvLoader\CsvLoader;
 
 // Load CSV File
 $csvLoader = new CsvLoader();
-$csvLoader->loadFile('files/stjosephSA12-import-test.csv');
+$filepath  = 'files/stjosephSA12-import-test.csv';
+$csvLoader->loadFile($filepath);
 
 // Array Map
 $mapping = [
@@ -42,5 +43,12 @@ $csvLoader->checkGroupOptionValuesStep($optionalColumns);
 // Process
 $csvLoader->processData();
 
+$contents = $csvLoader->getProcessedContents();
+
+// Delete file
+$csvLoader->stopWorkflow();
+$csvLoader = null;
+unlink($filepath);
+
 // Debugging
-var_export($csvLoader->getProcessedContents());
+var_export($contents);
