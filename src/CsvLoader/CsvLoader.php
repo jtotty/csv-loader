@@ -10,6 +10,7 @@ use Jtotty\Steps\CheckPupilGenderStep;
 use Jtotty\Steps\CheckPupilNamesStep;
 use Port\Csv\CsvReader;
 use Port\Csv\CsvWriter;
+use Port\Steps\Step\FilterStep;
 use Port\Steps\Step\MappingStep;
 use Port\Steps\Step\ValueConverterStep;
 use Port\Steps\StepAggregator as Workflow;
@@ -134,6 +135,30 @@ class CsvLoader
     }
 
     /**
+     * Remove rows that have no data in all columns.
+     *
+     * @return void
+     */
+    public function removeEmptyRowsStep()
+    {
+        $columnCount = count($this->getColumnHeadings());
+
+        $filterStep = new FilterStep();
+        $filterStep->add(function ($input) use ($columnCount) {
+            $blanks = 0;
+            foreach ($input as $value) {
+                if (empty($value)) {
+                    ++$blanks;
+                }
+            }
+
+            return $blanks !== $columnCount;
+        });
+
+        $this->workflow->addStep($filterStep);
+    }
+
+    /**
      * Renames the column names according to the map.
      *
      * @return void
@@ -191,7 +216,7 @@ class CsvLoader
      * Very specific method to convert the additional attributes
      * to.
      */
-    public function checkGroupOptionValuesStep(Array $options)
+    public function checkGroupOptionValuesStep(array $options)
     {
         $this->workflow->addStep(new CheckGroupOptionsStep($options));
     }

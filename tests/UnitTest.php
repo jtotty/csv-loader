@@ -11,22 +11,32 @@ class UnitTest extends TestCase
     public function setUp()
     {
         $this->csvLoader = new CsvLoader();
-        $this->csvLoader->loadFile('files/five_pupils_test.csv');
+        $this->csvLoader->loadFile('files/stjosephSA12-import-test.csv');
 
         // Array Map
         $mapping = [
+            'Preferred Forename'             => 'Forename',
+            'Preferred Surname'              => 'Surname',
+            'Date of Birth'                  => 'DOB',
+            'Year Group'                     => 'Year',
+            'Reg Group'                      => 'Tutor',
             'English as additional language' => 'EAL',
-            'Pupil Premium Indicator'        => 'Pupil Premium',
-            'Eligible for free meals'        => 'Free Meals',
-            'Ever in care'                   => 'Care',
+            'SEN Status'                     => 'SEN Status', // remove this column
         ];
 
-        $optionalColumns = ['EAL', 'Pupil Premium', 'Free Meals', 'Care'];
+        $optionalColumns = [
+            'EAL',
+            'Pupil Premium / Pupil Deprivation Grant',
+            'Free School Meals',
+            'Looked-After Children',
+            'Outside Agency Involvement',
+        ];
 
         // Set the names of the columns we want to change
         $this->csvLoader->setColumnMap($mapping);
 
         // Add the optional steps
+        $this->csvLoader->removeEmptyRowsStep();
         $this->csvLoader->mapColumnNamesStep();
         $this->csvLoader->checkPupilNamesStep();
         $this->csvLoader->checkPupilGenderStep();
@@ -37,6 +47,21 @@ class UnitTest extends TestCase
         $this->csvLoader->processData();
 
         $this->contents = $this->csvLoader->getProcessedContents();
+    }
+
+    /** @test */
+    public function processed_data_has_no_empty_rows()
+    {
+        foreach ($this->contents as $pupil_attributes) {
+            $count = 0;
+            foreach ($pupil_attributes as $attribute) {
+                if (empty($attribute)) {
+                    ++$count;
+                }
+            }
+
+            $this->assertTrue($count < 4);
+        }
     }
 
     /** @test */
