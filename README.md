@@ -1,10 +1,15 @@
 # csv-loader
 
-Loads data from a CSV file by column headings. Specific utility tool for SpeechLink Multimedia Ltd.
+Loads data and parses data from a CSV file. 
 
+This is a specific utility tool for SpeechLink Multimedia Ltd. Requires development in the application in which this is installed to work properly.
+
+## Functionality
+- Removes blank rows of data left behind by csv software *(Eg: MS Excel likes to leave cells as empty strings).
 - Mapping column names.
 - Checks validity of names.
-- Check validity of dates.
+- Fix date formats to UK.
+- Converts yes/no user inputs to correct values.
 
-## External Libraries Used
-PortPHP - https://portphp.readthedocs.io/en/latest/
+## Built With
+* [PortPHP](https://portphp.readthedocs.io/en/latest/) - Data import/export workflow for PHP
