@@ -66,7 +66,7 @@ class CsvLoader
      *
      * @return void
      */
-    public function loadFile(String $file_path)
+    public function loadFile(string $file_path)
     {
         // Set the file
         $this->file = new \SplFileObject($file_path);
@@ -129,7 +129,7 @@ class CsvLoader
      *
      * @return void
      */
-    public function stoprWorkflow()
+    public function stopWorkflow()
     {
         $this->workflow = null;
     }
@@ -242,7 +242,7 @@ class CsvLoader
     /**
      * Writes contents of an array to a csv file.
      */
-    public function writeToCsv(array $data, String $filePath)
+    public function writeToCsv(array $data, string $filePath)
     {
         $writer = new CsvWriter(','); // Set delimiter to comma (default = semicolon)
         $writer->setStream(fopen($filePath, 'w'));
